@@ -1,10 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
+#include "utils.h"
 
 int M;
 int L;
+int N = 16;
+int INITIAL_SIZE;
+int NUM_LEVELS;
+int ROOT_ADDR;
+int NUMS[16] = {
+    5, 81, 85, 16, 80, 97, 23, 13, 21, 42, 87, 14, 8, 52, 54, 31
+};
 
+void calc_metadata(int m, int l, int n);
 int parse_args(int len_args, char *argsv[]);
 
 int main(int argc, char *argv[]) {
@@ -13,9 +23,26 @@ int main(int argc, char *argv[]) {
     if (go == 1) {
         return 1;
     }
-    printf("M:\t%d\n", M);
-    printf("L:\t%d\n", L);
+    calc_metadata(M, L, N);
+    int B[INITIAL_SIZE];
+
+    printf("Memory allocated on the stack for:\n");
+    printf("M:\t\t%d\n", M);
+    printf("L:\t\t%d\n", L);
+    printf("Num Levels:\t%d\n", NUM_LEVELS);
+    printf("Initial size:\t%d\n", INITIAL_SIZE);
+    printf("Root Addr:\t%d\n\n", ROOT_ADDR);
+    print_arr(NUMS, 16);
     return 0;
+}
+
+void calc_metadata(int m, int l, int n) {
+    NUM_LEVELS = ceil(log(n) / log(m));
+    for (int i = 0; i < NUM_LEVELS; i++) {
+        INITIAL_SIZE += (m - 1) * pow(m, i);
+    }
+    INITIAL_SIZE += l * pow(m, NUM_LEVELS);
+    ROOT_ADDR = INITIAL_SIZE - (l - 1);
 }
 
 int parse_args(int len_args, char *argsv[]) {
